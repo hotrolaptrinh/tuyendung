@@ -1,0 +1,31 @@
+{
+  "id": "hr-generalist",
+  "title": "HR Generalist",
+  "department": "Phòng Nhân sự",
+  "company": "Công ty CP Công nghệ FutureWorks",
+  "location": "TP. Hồ Chí Minh",
+  "interviewAddress": "Lầu 5, Toà nhà Centric, 1 Nguyễn Huệ, Quận 1, TP. HCM",
+  "contactPhone": "0938 456 789",
+  "apply": {
+    "instructions": "Gửi CV về hr@futureworks.vn với tiêu đề: [FW_HR]_Họ tên",
+    "deadline": "15/06/2024",
+    "applyLink": "https://futureworks.vn/careers/hr-generalist"
+  },
+  "benefits": [
+    "Lương 16-22 triệu tuỳ kinh nghiệm",
+    "Thưởng quý theo kết quả OKR",
+    "12 ngày phép/năm + 5 ngày recharge",
+    "Được tham gia xây dựng văn hoá doanh nghiệp"
+  ],
+  "description": [
+    "Triển khai quy trình tuyển dụng, onboarding",
+    "Theo dõi chính sách phúc lợi, hợp đồng lao động",
+    "Đồng hành cùng các trưởng bộ phận trong xây dựng lộ trình phát triển nhân sự"
+  ],
+  "requirements": [
+    "Tối thiểu 2 năm kinh nghiệm ở vị trí tương đương",
+    "Nắm rõ luật lao động Việt Nam",
+    "Kỹ năng giao tiếp, thuyết phục và giải quyết vấn đề tốt",
+    "Ưu tiên ứng viên có chứng chỉ HRBP"
+  ]
+}
