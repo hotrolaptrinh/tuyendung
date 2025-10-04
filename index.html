@@ -18,9 +18,22 @@
         <h1>Trình tạo bài đăng tuyển dụng</h1>
         <p>Chọn công việc, chọn layout và xuất thành ảnh trong vài bước.</p>
       </div>
-      <button id="exportButton" class="button button-primary" disabled>
-        Xuất hình ảnh
-      </button>
+      <div class="header-actions">
+        <button id="reloadDataButton" class="button button-secondary" type="button">
+          Tải dữ liệu mới
+        </button>
+        <span
+          id="dataStatus"
+          class="data-status"
+          data-state="loading"
+          aria-live="polite"
+        >
+          Đang tải dữ liệu...
+        </span>
+        <button id="exportButton" class="button button-primary" disabled>
+          Xuất hình ảnh
+        </button>
+      </div>
     </header>
     <main class="app">
       <section class="panel" aria-labelledby="jobs-title">
@@ -66,7 +79,6 @@
         </div>
       </article>
     </template>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha256-vo4a9PXgC7cmkQC9h5pz50jdK4Zk90un0nLBKBPXn2I=" crossorigin="anonymous"></script>
     <script src="app.js" type="module"></script>
   </body>
 </html>

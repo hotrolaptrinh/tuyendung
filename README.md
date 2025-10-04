@@ -27,3 +27,4 @@ Bạn có thể bổ sung/chỉnh sửa dữ liệu bằng cách cập nhật c�
 - Render nội dung tuyển dụng theo layout với phần header, phúc lợi, danh sách công việc, footer thông tin ứng tuyển.
 - Tùy chọn bật/tắt lưới canh chỉnh.
 - Xuất bản xem trước thành ảnh PNG bằng 1 click.
+- Làm mới dữ liệu JSON ngay trong giao diện bằng nút "Tải dữ liệu mới".

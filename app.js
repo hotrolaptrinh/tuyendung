@@ -5,13 +5,19 @@ const previewWrapper = document.getElementById('previewWrapper');
 const exportButton = document.getElementById('exportButton');
 const showGridToggle = document.getElementById('showGridToggle');
 const jobCardTemplate = document.getElementById('jobCardTemplate');
+const reloadButton = document.getElementById('reloadDataButton');
+const dataStatus = document.getElementById('dataStatus');
 
 const state = {
   jobs: [],
   layouts: [],
   selectedJobs: new Set(),
   selectedLayoutId: null,
+  isLoading: false,
+  lastLoadedAt: null,
 };
+
+let html2canvasPromise = null;
 
 async function fetchJson(path) {
   const response = await fetch(path);
@@ -21,33 +27,120 @@ async function fetchJson(path) {
   return response.json();
 }
 
-async function loadJobs() {
-  try {
-    const index = await fetchJson('data/jobs/index.json');
-    const jobs = [];
-    for (const entry of index) {
+async function fetchJobsData() {
+  const index = await fetchJson('data/jobs/index.json');
+  if (!Array.isArray(index)) {
+    throw new Error('Dữ liệu công việc không hợp lệ.');
+  }
+
+  const jobs = await Promise.all(
+    index.map(async (entry) => {
+      const fileName = typeof entry.file === 'string' ? entry.file : null;
+      if (!fileName) {
+        console.warn('Bỏ qua mục công việc vì thiếu đường dẫn tệp:', entry);
+        return null;
+      }
+
       try {
-        const data = await fetchJson(`data/jobs/${entry.file}`);
-        const id = data.id ?? entry.id ?? entry.file.replace(/\.json$/i, '');
-        jobs.push({ ...data, id });
+        const data = await fetchJson(`data/jobs/${fileName}`);
+        const id = data.id ?? entry.id ?? fileName.replace(/\.json$/i, '');
+        return { ...data, id };
       } catch (error) {
         console.error(error);
+        return null;
       }
-    }
-    state.jobs = jobs;
-    renderJobList();
-  } catch (error) {
-    jobsContainer.innerHTML = `<p class="error">${error.message}</p>`;
-  }
+    })
+  );
+
+  return jobs.filter(Boolean);
 }
 
-async function loadLayouts() {
+async function fetchLayoutsData() {
+  const layouts = await fetchJson('data/layouts.json');
+  if (!Array.isArray(layouts)) {
+    throw new Error('Dữ liệu layout không hợp lệ.');
+  }
+  return layouts;
+}
+
+function showLoadingPlaceholders() {
+  jobsContainer.innerHTML = '<p class="loading">Đang tải danh sách công việc...</p>';
+  layoutsContainer.innerHTML = '<p class="loading">Đang tải layout...</p>';
+  preview.className = 'preview';
+  preview.innerHTML =
+    '<div class="preview__loading"><p>Đang tải dữ liệu mới, vui lòng chờ...</p></div>';
+  exportButton.disabled = true;
+}
+
+function setLoadingUi(isLoading) {
+  reloadButton.disabled = isLoading;
+  reloadButton.textContent = isLoading ? 'Đang tải...' : 'Tải dữ liệu mới';
+  reloadButton.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+}
+
+function updateStatus(message, status) {
+  if (!dataStatus) return;
+  dataStatus.textContent = message;
+  dataStatus.dataset.state = status;
+}
+
+function formatTime(date) {
+  return date.toLocaleString('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    day: '2-digit',
+    month: '2-digit',
+  });
+}
+
+async function loadData({ preserveSelection = true } = {}) {
+  if (state.isLoading) {
+    return;
+  }
+
+  state.isLoading = true;
+  updateStatus('Đang tải dữ liệu...', 'loading');
+  setLoadingUi(true);
+  showLoadingPlaceholders();
+
+  const previousSelection = preserveSelection ? new Set(state.selectedJobs) : new Set();
+  const previousLayoutId = preserveSelection ? state.selectedLayoutId : null;
+
   try {
-    const layouts = await fetchJson('data/layouts.json');
+    const [jobs, layouts] = await Promise.all([fetchJobsData(), fetchLayoutsData()]);
+
+    state.jobs = jobs;
     state.layouts = layouts;
+
+    const availableJobIds = new Set(jobs.map((job) => job.id));
+    const selectedJobIds = preserveSelection
+      ? [...previousSelection].filter((id) => availableJobIds.has(id))
+      : [];
+    state.selectedJobs = new Set(selectedJobIds);
+
+    const hasPreviousLayout =
+      previousLayoutId !== null && layouts.some((layout) => layout.id === previousLayoutId);
+    state.selectedLayoutId = hasPreviousLayout ? previousLayoutId : layouts[0]?.id ?? null;
+
+    renderJobList();
     renderLayoutOptions();
+
+    const now = new Date();
+    state.lastLoadedAt = now;
+    updateStatus(`Đã cập nhật lúc ${formatTime(now)}`, 'success');
   } catch (error) {
+    console.error(error);
+    state.jobs = [];
+    state.layouts = [];
+    state.selectedJobs = new Set();
+    state.selectedLayoutId = null;
+    jobsContainer.innerHTML = `<p class="error">${error.message}</p>`;
     layoutsContainer.innerHTML = `<p class="error">${error.message}</p>`;
+    renderPreview();
+    updateStatus('Tải dữ liệu thất bại. Thử lại.', 'error');
+  } finally {
+    state.isLoading = false;
+    setLoadingUi(false);
   }
 }
 
@@ -342,10 +435,15 @@ function fillList(listElement, items) {
 }
 
 async function handleExport() {
+  const html2canvasInstance = await getHtml2canvas();
   exportButton.disabled = true;
   exportButton.textContent = 'Đang xuất...';
   try {
-    const canvas = await html2canvas(preview, {
+    document.body.classList.add('is-exporting');
+    preview.classList.add('preview--export');
+    await nextFrame();
+    await nextFrame();
+    const canvas = await html2canvasInstance(preview, {
       backgroundColor: '#ffffff',
       scale: window.devicePixelRatio < 2 ? 2 : window.devicePixelRatio,
     });
@@ -363,6 +461,8 @@ async function handleExport() {
   } catch (error) {
     alert(error.message);
   } finally {
+    preview.classList.remove('preview--export');
+    document.body.classList.remove('is-exporting');
     exportButton.disabled = false;
     exportButton.textContent = 'Xuất hình ảnh';
   }
@@ -384,6 +484,39 @@ function canvasToBlob(canvas) {
   });
 }
 
+function getHtml2canvas() {
+  if (typeof globalThis.html2canvas === 'function') {
+    return Promise.resolve(globalThis.html2canvas);
+  }
+
+  if (!html2canvasPromise) {
+    html2canvasPromise = import(
+      'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.esm.js'
+    )
+      .then((module) => {
+        const instance = module?.default ?? module?.html2canvas ?? module;
+        if (typeof instance !== 'function') {
+          throw new Error('Không thể khởi tạo thư viện html2canvas.');
+        }
+        globalThis.html2canvas = instance;
+        return instance;
+      })
+      .catch((error) => {
+        html2canvasPromise = null;
+        console.error('Không thể tải html2canvas:', error);
+        throw new Error(
+          'Không thể tải thư viện html2canvas. Vui lòng kiểm tra kết nối mạng và thử lại.'
+        );
+      });
+  }
+
+  return html2canvasPromise;
+}
+
+function nextFrame() {
+  return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+}
+
 function slugify(text) {
   return text
     .toLowerCase()
@@ -401,5 +534,12 @@ previewWrapper.classList.toggle('hide-grid', !showGridToggle.checked);
 
 exportButton.addEventListener('click', handleExport);
 
-loadJobs();
-loadLayouts();
+reloadButton.addEventListener('click', () => {
+  loadData({ preserveSelection: true });
+});
+
+getHtml2canvas().catch(() => {
+  /* Kết nối có thể chưa sẵn sàng; xử lý khi người dùng xuất. */
+});
+
+loadData();
