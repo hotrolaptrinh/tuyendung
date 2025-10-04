@@ -5,16 +5,12 @@ const previewWrapper = document.getElementById('previewWrapper');
 const exportButton = document.getElementById('exportButton');
 const showGridToggle = document.getElementById('showGridToggle');
 const jobCardTemplate = document.getElementById('jobCardTemplate');
-const reloadButton = document.getElementById('reloadDataButton');
-const dataStatus = document.getElementById('dataStatus');
 
 const state = {
   jobs: [],
   layouts: [],
   selectedJobs: new Set(),
   selectedLayoutId: null,
-  isLoading: false,
-  lastLoadedAt: null,
 };
 
 async function fetchJson(path) {
@@ -25,120 +21,33 @@ async function fetchJson(path) {
   return response.json();
 }
 
-async function fetchJobsData() {
-  const index = await fetchJson('data/jobs/index.json');
-  if (!Array.isArray(index)) {
-    throw new Error('Dữ liệu công việc không hợp lệ.');
-  }
-
-  const jobs = await Promise.all(
-    index.map(async (entry) => {
-      const fileName = typeof entry.file === 'string' ? entry.file : null;
-      if (!fileName) {
-        console.warn('Bỏ qua mục công việc vì thiếu đường dẫn tệp:', entry);
-        return null;
-      }
-
+async function loadJobs() {
+  try {
+    const index = await fetchJson('data/jobs/index.json');
+    const jobs = [];
+    for (const entry of index) {
       try {
-        const data = await fetchJson(`data/jobs/${fileName}`);
-        const id = data.id ?? entry.id ?? fileName.replace(/\.json$/i, '');
-        return { ...data, id };
+        const data = await fetchJson(`data/jobs/${entry.file}`);
+        const id = data.id ?? entry.id ?? entry.file.replace(/\.json$/i, '');
+        jobs.push({ ...data, id });
       } catch (error) {
         console.error(error);
-        return null;
       }
-    })
-  );
-
-  return jobs.filter(Boolean);
-}
-
-async function fetchLayoutsData() {
-  const layouts = await fetchJson('data/layouts.json');
-  if (!Array.isArray(layouts)) {
-    throw new Error('Dữ liệu layout không hợp lệ.');
-  }
-  return layouts;
-}
-
-function showLoadingPlaceholders() {
-  jobsContainer.innerHTML = '<p class="loading">Đang tải danh sách công việc...</p>';
-  layoutsContainer.innerHTML = '<p class="loading">Đang tải layout...</p>';
-  preview.className = 'preview';
-  preview.innerHTML =
-    '<div class="preview__loading"><p>Đang tải dữ liệu mới, vui lòng chờ...</p></div>';
-  exportButton.disabled = true;
-}
-
-function setLoadingUi(isLoading) {
-  reloadButton.disabled = isLoading;
-  reloadButton.textContent = isLoading ? 'Đang tải...' : 'Tải dữ liệu mới';
-  reloadButton.setAttribute('aria-busy', isLoading ? 'true' : 'false');
-}
-
-function updateStatus(message, status) {
-  if (!dataStatus) return;
-  dataStatus.textContent = message;
-  dataStatus.dataset.state = status;
-}
-
-function formatTime(date) {
-  return date.toLocaleString('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    day: '2-digit',
-    month: '2-digit',
-  });
-}
-
-async function loadData({ preserveSelection = true } = {}) {
-  if (state.isLoading) {
-    return;
-  }
-
-  state.isLoading = true;
-  updateStatus('Đang tải dữ liệu...', 'loading');
-  setLoadingUi(true);
-  showLoadingPlaceholders();
-
-  const previousSelection = preserveSelection ? new Set(state.selectedJobs) : new Set();
-  const previousLayoutId = preserveSelection ? state.selectedLayoutId : null;
-
-  try {
-    const [jobs, layouts] = await Promise.all([fetchJobsData(), fetchLayoutsData()]);
-
+    }
     state.jobs = jobs;
-    state.layouts = layouts;
-
-    const availableJobIds = new Set(jobs.map((job) => job.id));
-    const selectedJobIds = preserveSelection
-      ? [...previousSelection].filter((id) => availableJobIds.has(id))
-      : [];
-    state.selectedJobs = new Set(selectedJobIds);
-
-    const hasPreviousLayout =
-      previousLayoutId !== null && layouts.some((layout) => layout.id === previousLayoutId);
-    state.selectedLayoutId = hasPreviousLayout ? previousLayoutId : layouts[0]?.id ?? null;
-
     renderJobList();
-    renderLayoutOptions();
-
-    const now = new Date();
-    state.lastLoadedAt = now;
-    updateStatus(`Đã cập nhật lúc ${formatTime(now)}`, 'success');
   } catch (error) {
-    console.error(error);
-    state.jobs = [];
-    state.layouts = [];
-    state.selectedJobs = new Set();
-    state.selectedLayoutId = null;
     jobsContainer.innerHTML = `<p class="error">${error.message}</p>`;
+  }
+}
+
+async function loadLayouts() {
+  try {
+    const layouts = await fetchJson('data/layouts.json');
+    state.layouts = layouts;
+    renderLayoutOptions();
+  } catch (error) {
     layoutsContainer.innerHTML = `<p class="error">${error.message}</p>`;
-    renderPreview();
-    updateStatus('Tải dữ liệu thất bại. Thử lại.', 'error');
-  } finally {
-    state.isLoading = false;
-    setLoadingUi(false);
   }
 }
 
@@ -433,15 +342,10 @@ function fillList(listElement, items) {
 }
 
 async function handleExport() {
-  const html2canvasInstance = getHtml2canvas();
   exportButton.disabled = true;
   exportButton.textContent = 'Đang xuất...';
   try {
-    document.body.classList.add('is-exporting');
-    preview.classList.add('preview--export');
-    await nextFrame();
-    await nextFrame();
-    const canvas = await html2canvasInstance(preview, {
+    const canvas = await html2canvas(preview, {
       backgroundColor: '#ffffff',
       scale: window.devicePixelRatio < 2 ? 2 : window.devicePixelRatio,
     });
@@ -459,8 +363,6 @@ async function handleExport() {
   } catch (error) {
     alert(error.message);
   } finally {
-    preview.classList.remove('preview--export');
-    document.body.classList.remove('is-exporting');
     exportButton.disabled = false;
     exportButton.textContent = 'Xuất hình ảnh';
   }
@@ -482,18 +384,6 @@ function canvasToBlob(canvas) {
   });
 }
 
-function getHtml2canvas() {
-  const instance = globalThis.html2canvas;
-  if (typeof instance !== 'function') {
-    throw new Error('Thư viện html2canvas chưa sẵn sàng. Vui lòng thử lại sau.');
-  }
-  return instance;
-}
-
-function nextFrame() {
-  return new Promise((resolve) => requestAnimationFrame(() => resolve()));
-}
-
 function slugify(text) {
   return text
     .toLowerCase()
@@ -511,8 +401,5 @@ previewWrapper.classList.toggle('hide-grid', !showGridToggle.checked);
 
 exportButton.addEventListener('click', handleExport);
 
-reloadButton.addEventListener('click', () => {
-  loadData({ preserveSelection: true });
-});
-
-loadData();
+loadJobs();
+loadLayouts();
