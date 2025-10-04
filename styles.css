@@ -181,9 +181,6 @@ body {
     );
   padding: 1rem;
   border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  overflow: hidden;
 }
 
 .preview-wrapper.hide-grid {
@@ -191,21 +188,14 @@ body {
 }
 
 .preview {
-  width: min(100%, 1080px);
-  aspect-ratio: 1080 / 1350;
-  height: auto;
+  width: 1080px;
+  height: 1350px;
   margin: 0 auto;
   background: white;
   border-radius: 32px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-}
-
-.preview.preview--export {
-  width: 1080px;
-  height: 1350px;
-  aspect-ratio: auto;
 }
 
 .preview__header {
@@ -446,221 +436,9 @@ body {
 }
 
 @media (max-width: 1180px) {
-  body:not(.is-exporting) .preview {
+  .preview {
     width: min(100%, 720px);
-  }
-}
-
-@media (max-width: 900px) {
-  .app-header {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: center;
-    padding: 1.75rem 1.25rem;
-  }
-
-  .app-header .brand {
-    display: grid;
-    gap: 0.35rem;
-  }
-
-  .app-header p {
-    font-size: 0.95rem;
-  }
-
-  .app-header .button {
-    width: 100%;
-  }
-
-  .app {
-    padding: 0 1.25rem 1.75rem;
-    gap: 1.25rem;
-  }
-
-  .panel {
-    padding: 1.4rem;
-    border-radius: 20px;
-    gap: 1rem;
-  }
-
-  .panel h2 {
-    font-size: 1.3rem;
-  }
-
-  .panel-description {
-    font-size: 0.9rem;
-  }
-
-  .job-item,
-  .layout-item {
-    padding: 0.85rem;
-    border-radius: 14px;
-    gap: 0.6rem;
-  }
-
-  .job-item__title,
-  .layout-item__title {
-    font-size: 1rem;
-  }
-
-  .job-item__company,
-  .job-item__location,
-  .layout-item__description {
-    font-size: 0.85rem;
-  }
-
-  body:not(.is-exporting) .preview {
-    border-radius: 28px;
-  }
-
-  body:not(.is-exporting) .preview__header {
-    padding: 2rem 2rem 1.35rem;
-    gap: 0.4rem;
-  }
-
-  body:not(.is-exporting) .preview__header-logo {
-    width: 96px;
-  }
-
-  body:not(.is-exporting) .preview__header-title {
-    font-size: 2.2rem;
-  }
-
-  body:not(.is-exporting) .preview__header-subtitle {
-    font-size: 1rem;
-  }
-
-  body:not(.is-exporting) .preview__header-company {
-    font-size: 1.1rem;
-  }
-
-  body:not(.is-exporting) .preview__tagline {
-    font-size: 0.95rem;
-  }
-
-  body:not(.is-exporting) .preview__body {
-    padding: 1.75rem 2rem 2rem;
-    gap: 1.25rem;
-  }
-
-  body:not(.is-exporting) .preview__jobs {
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  }
-
-  body:not(.is-exporting) .job-card {
-    padding: 1.25rem;
-    border-radius: 18px;
-  }
-
-  body:not(.is-exporting) .job-card__header h3 {
-    font-size: 1.25rem;
-  }
-
-  body:not(.is-exporting) .job-card__department,
-  body:not(.is-exporting) .job-card__location {
-    font-size: 0.85rem;
-  }
-
-  body:not(.is-exporting) .job-card__section h4 {
-    font-size: 0.95rem;
-    margin-bottom: 0.4rem;
-  }
-
-  body:not(.is-exporting) .job-card__section ul {
-    font-size: 0.85rem;
-    gap: 0.3rem;
-  }
-
-  body:not(.is-exporting) .preview__benefits-title {
-    font-size: 1rem;
-  }
-
-  body:not(.is-exporting) .preview__benefits-list {
-    font-size: 0.85rem;
-    gap: 0.3rem;
-  }
-
-  body:not(.is-exporting) .preview__footer {
-    padding: 1.4rem 2rem;
-    gap: 0.6rem;
-    font-size: 0.9rem;
-  }
-
-  body:not(.is-exporting) .preview__footer-items {
-    gap: 0.65rem;
-  }
-
-  body:not(.is-exporting) .preview__footer-item {
-    padding: 0.9rem 1rem;
-  }
-
-  body:not(.is-exporting) .preview__footer-item span {
-    font-size: 0.75rem;
-  }
-
-  body:not(.is-exporting) .preview__footer-item p {
-    font-size: 0.85rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .app {
-    padding: 0 1rem 1.5rem;
-    gap: 1rem;
-  }
-
-  .panel {
-    padding: 1.25rem;
-  }
-
-  .preview-wrapper {
-    padding: 0.75rem;
-  }
-
-  body:not(.is-exporting) .preview {
-    border-radius: 24px;
-  }
-
-  body:not(.is-exporting) .preview__header {
-    padding: 1.6rem 1.5rem 1.1rem;
-  }
-
-  body:not(.is-exporting) .preview__header-title {
-    font-size: 1.9rem;
-  }
-
-  body:not(.is-exporting) .preview__header-company {
-    font-size: 1rem;
-  }
-
-  body:not(.is-exporting) .preview__body {
-    padding: 1.35rem 1.5rem 1.6rem;
-    gap: 1rem;
-  }
-
-  body:not(.is-exporting) .job-card {
-    padding: 1.1rem;
-  }
-
-  body:not(.is-exporting) .job-card__header h3 {
-    font-size: 1.1rem;
-  }
-
-  body:not(.is-exporting) .job-card__section h4 {
-    font-size: 0.85rem;
-  }
-
-  body:not(.is-exporting) .job-card__section ul {
-    font-size: 0.8rem;
-  }
-
-  body:not(.is-exporting) .preview__footer {
-    padding: 1.2rem 1.5rem;
-    font-size: 0.85rem;
-  }
-
-  body:not(.is-exporting) .preview__footer-item {
-    padding: 0.8rem 0.9rem;
+    height: auto;
+    aspect-ratio: 4 / 5;
   }
 }

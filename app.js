@@ -345,10 +345,6 @@ async function handleExport() {
   exportButton.disabled = true;
   exportButton.textContent = 'Đang xuất...';
   try {
-    document.body.classList.add('is-exporting');
-    preview.classList.add('preview--export');
-    await nextFrame();
-    await nextFrame();
     const canvas = await html2canvas(preview, {
       backgroundColor: '#ffffff',
       scale: window.devicePixelRatio < 2 ? 2 : window.devicePixelRatio,
@@ -367,8 +363,6 @@ async function handleExport() {
   } catch (error) {
     alert(error.message);
   } finally {
-    preview.classList.remove('preview--export');
-    document.body.classList.remove('is-exporting');
     exportButton.disabled = false;
     exportButton.textContent = 'Xuất hình ảnh';
   }
@@ -388,10 +382,6 @@ function canvasToBlob(canvas) {
       1
     );
   });
-}
-
-function nextFrame() {
-  return new Promise((resolve) => requestAnimationFrame(() => resolve()));
 }
 
 function slugify(text) {
