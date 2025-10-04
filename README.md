@@ -17,9 +17,40 @@
 
 - `data/jobs/index.json`: liệt kê các tệp công việc.
 - `data/jobs/*.json`: thông tin chi tiết từng vị trí (tiêu đề, mô tả, phúc lợi, liên hệ...).
-- `data/layouts.json`: cấu hình các layout (tiêu đề, tagline, nhãn phần footer...).
+- `data/layouts.json`: cấu hình các layout (tiêu đề, tagline, nhãn phần footer, template HTML hiển thị).
 
 Bạn có thể bổ sung/chỉnh sửa dữ liệu bằng cách cập nhật các tệp JSON tương ứng, giao diện sẽ hiển thị lại ngay khi tải trang.
+
+## Tùy chỉnh layout bằng template HTML
+
+Mỗi layout có thể định nghĩa cấu trúc hiển thị bằng thuộc tính `template` trong `data/layouts.json`. Chuỗi template sử dụng cú pháp `{{ }}` tương tự Blade/Twig (Mustache):
+
+- `{{variable}}` hiển thị giá trị và tự động escape HTML.
+- `{{{variable}}}` hiển thị giá trị dạng HTML thô (không escape).
+- `{{#section}}...{{/section}}` lặp/hiển thị nội dung khi giá trị truthy (mảng, object, boolean `true`).
+- `{{^section}}...{{/section}}` hiển thị khi giá trị falsy hoặc mảng trống.
+- Bên trong vòng lặp có thể dùng `{{@index}}` để lấy chỉ số phần tử.
+
+Ngữ cảnh (context) sẵn có trong template:
+
+- `header`: `{ title, subtitle, company, tagline }`.
+- `jobs`: mảng các công việc đã chọn, bao gồm các trường từ tệp JSON (`title`, `department`, `location`, `description`, `requirements`, ...).
+- `benefits`: mảng phúc lợi gộp từ tất cả công việc, `hasBenefits` (boolean) giúp hiển thị có điều kiện.
+- `primaryJob`: công việc đầu tiên được chọn, đã chuẩn hóa thêm `applyInstructions`, `applyDeadline`, `applyLinkUrl`, `contactPhone`, `interviewAddress`.
+- `footer`: các nhãn từ layout cộng với dữ liệu thực tế (`applyInstructions`, `applyDeadline`, `applyLinkUrl`, `applyLinkLabel`, `interviewAddress`, `contactValue`, `contactPhone`).
+- `company`, `tagline`, `layout` (đối tượng cấu hình gốc).
+
+Ví dụ rút gọn:
+
+```json
+{
+  "id": "custom",
+  "name": "Layout mới",
+  "template": "<header><h1>{{header.title}}</h1></header>\n<section>{{#jobs}}<h2>{{title}}</h2>{{/jobs}}</section>"
+}
+```
+
+Sau khi lưu, bấm "Tải dữ liệu mới" hoặc tải lại trang để áp dụng thay đổi.
 
 ## Tính năng chính
 

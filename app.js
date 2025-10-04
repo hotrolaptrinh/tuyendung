@@ -4,7 +4,6 @@ const preview = document.getElementById('preview');
 const previewWrapper = document.getElementById('previewWrapper');
 const exportButton = document.getElementById('exportButton');
 const showGridToggle = document.getElementById('showGridToggle');
-const jobCardTemplate = document.getElementById('jobCardTemplate');
 const reloadButton = document.getElementById('reloadDataButton');
 const dataStatus = document.getElementById('dataStatus');
 
@@ -266,172 +265,208 @@ function renderPreview() {
     return;
   }
 
-  exportButton.disabled = false;
-  preview.classList.add(`preview-layout--${layout.id}`);
-
-  const primaryJob = selectedJobs[0];
-  const primaryCompany = primaryJob.company ?? layout.headerSubtitle ?? 'Doanh nghiệp';
-
-  const header = document.createElement('header');
-  header.className = 'preview__header';
-
-  const headerSubtitle = document.createElement('p');
-  headerSubtitle.className = 'preview__header-subtitle';
-  headerSubtitle.textContent = layout.headerSubtitle ?? 'Tuyển dụng';
-
-  const headerTitle = document.createElement('h1');
-  headerTitle.className = 'preview__header-title';
-  headerTitle.textContent = layout.headerTitle ?? 'We are hiring';
-
-  const headerCompany = document.createElement('p');
-  headerCompany.className = 'preview__header-company';
-  headerCompany.textContent = primaryCompany;
-
-  const tagline = document.createElement('p');
-  tagline.className = 'preview__tagline';
-  tagline.textContent = layout.tagline ?? '';
-
-  header.append(headerSubtitle, headerTitle, headerCompany);
-  if (layout.tagline) {
-    header.append(tagline);
-  }
-
-  const body = document.createElement('section');
-  body.className = 'preview__body';
-
-  const jobsWrapper = document.createElement('div');
-  jobsWrapper.className = 'preview__jobs';
-  selectedJobs.forEach((job) => {
-    jobsWrapper.append(createJobCard(job));
-  });
-
-  body.append(jobsWrapper);
-
-  const benefits = Array.from(
-    new Set(
-      selectedJobs.flatMap((job) => Array.isArray(job.benefits) ? job.benefits : [])
-    )
-  );
-  if (benefits.length > 0) {
-    const benefitsSection = document.createElement('section');
-    benefitsSection.className = 'preview__benefits';
-
-    const benefitsTitle = document.createElement('h3');
-    benefitsTitle.className = 'preview__benefits-title';
-    benefitsTitle.textContent = 'Chế độ đãi ngộ';
-
-    const benefitsList = document.createElement('ul');
-    benefitsList.className = 'preview__benefits-list';
-    benefits.forEach((benefit) => {
-      const li = document.createElement('li');
-      li.textContent = benefit;
-      benefitsList.append(li);
-    });
-
-    benefitsSection.append(benefitsTitle, benefitsList);
-    body.append(benefitsSection);
-  }
-
-  const footer = document.createElement('footer');
-  footer.className = 'preview__footer';
-
-  if (layout.tagline) {
-    const footerTagline = document.createElement('p');
-    footerTagline.textContent = layout.tagline;
-    footer.append(footerTagline);
-  }
-
-  const footerItems = document.createElement('div');
-  footerItems.className = 'preview__footer-items';
-
-  const applyItem = document.createElement('div');
-  applyItem.className = 'preview__footer-item';
-  const applyLabel = document.createElement('span');
-  applyLabel.textContent = layout.footer?.applyLabel ?? 'Nộp hồ sơ';
-  const applyContent = document.createElement('p');
-  applyContent.textContent = primaryJob.apply?.instructions ?? 'Liên hệ bộ phận nhân sự để được hướng dẫn.';
-  applyItem.append(applyLabel, applyContent);
-  if (primaryJob.apply?.deadline) {
-    const deadline = document.createElement('p');
-    deadline.innerHTML = `<strong>Hạn chót:</strong> ${primaryJob.apply.deadline}`;
-    applyItem.append(deadline);
-  }
-  if (primaryJob.apply?.applyLink) {
-    const applyLink = document.createElement('a');
-    applyLink.href = primaryJob.apply.applyLink;
-    applyLink.textContent = 'Link ứng tuyển';
-    applyLink.target = '_blank';
-    applyLink.rel = 'noopener noreferrer';
-    applyItem.append(applyLink);
-  }
-
-  const interviewItem = document.createElement('div');
-  interviewItem.className = 'preview__footer-item';
-  const interviewLabel = document.createElement('span');
-  interviewLabel.textContent = layout.footer?.interviewLabel ?? 'Địa điểm phỏng vấn';
-  const interviewContent = document.createElement('p');
-  interviewContent.textContent = primaryJob.interviewAddress ?? 'Sẽ thông báo sau khi đạt phỏng vấn.';
-  interviewItem.append(interviewLabel, interviewContent);
-
-  const contactItem = document.createElement('div');
-  contactItem.className = 'preview__footer-item';
-  const contactLabel = document.createElement('span');
-  contactLabel.textContent = layout.footer?.contactLabel ?? 'Liên hệ';
-  const contactContent = document.createElement('p');
-  const applyDeadline = primaryJob.apply?.deadline;
-  const contactPhone = primaryJob.contactPhone ?? '---';
-  contactContent.textContent = applyDeadline
-    ? `${contactPhone} • Hạn chót: ${applyDeadline}`
-    : contactPhone;
-  contactItem.append(contactLabel, contactContent);
-
-  footerItems.append(applyItem, interviewItem, contactItem);
-  footer.append(footerItems);
-
-  preview.append(header, body, footer);
-}
-
-function createJobCard(job) {
-  const fragment = jobCardTemplate.content.cloneNode(true);
-  const title = fragment.querySelector('.job-card__title');
-  const department = fragment.querySelector('.job-card__department');
-  const location = fragment.querySelector('.job-card__location');
-  const descriptionList = fragment.querySelector('.job-card__description');
-  const requirementsList = fragment.querySelector('.job-card__requirements');
-
-  title.textContent = job.title;
-  if (job.department) {
-    department.textContent = job.department;
-  } else {
-    department.remove();
-  }
-
-  if (job.location) {
-    location.textContent = job.location;
-  } else {
-    location.remove();
-  }
-
-  fillList(descriptionList, job.description);
-  fillList(requirementsList, job.requirements);
-
-  return fragment;
-}
-
-function fillList(listElement, items) {
-  listElement.innerHTML = '';
-  if (!Array.isArray(items) || items.length === 0) {
-    const empty = document.createElement('li');
-    empty.textContent = 'Đang cập nhật.';
-    listElement.append(empty);
+  if (!layout.template) {
+    exportButton.disabled = true;
+    const missing = document.createElement('div');
+    missing.className = 'preview__empty';
+    const title = document.createElement('h3');
+    title.textContent = 'Layout chưa cấu hình template';
+    const description = document.createElement('p');
+    description.textContent = 'Hãy thêm thuộc tính "template" cho layout để hiển thị nội dung.';
+    missing.append(title, description);
+    preview.append(missing);
     return;
   }
 
-  items.forEach((item) => {
-    const li = document.createElement('li');
-    li.textContent = item;
-    listElement.append(li);
+  exportButton.disabled = false;
+  preview.classList.add(`preview-layout--${layout.id}`);
+
+  const templateContext = createPreviewContext(layout, selectedJobs);
+  const html = renderTemplate(layout.template, templateContext);
+  preview.innerHTML = html;
+}
+
+function createPreviewContext(layout, jobs) {
+  const primaryJob = jobs[0];
+  const primaryCompany = primaryJob.company ?? layout.headerSubtitle ?? 'Doanh nghiệp';
+
+  const benefits = Array.from(
+    new Set(jobs.flatMap((job) => (Array.isArray(job.benefits) ? job.benefits : [])))
+  ).filter(Boolean);
+
+  const applyInstructions = primaryJob.apply?.instructions ??
+    'Liên hệ bộ phận nhân sự để được hướng dẫn.';
+  const applyDeadline = primaryJob.apply?.deadline ?? '';
+  const applyLinkUrl = primaryJob.apply?.applyLink ?? '';
+  const contactPhone = primaryJob.contactPhone ?? '---';
+  const interviewAddress = primaryJob.interviewAddress ?? 'Sẽ thông báo sau khi đạt phỏng vấn.';
+
+  const jobsForTemplate = jobs.map((job) => ({
+    ...job,
+    description: Array.isArray(job.description) ? job.description : [],
+    requirements: Array.isArray(job.requirements) ? job.requirements : [],
+  }));
+
+  const header = {
+    title: layout.headerTitle ?? 'We are hiring',
+    subtitle: layout.headerSubtitle ?? 'Tuyển dụng',
+    company: primaryCompany,
+    tagline: layout.tagline ?? '',
+  };
+
+  const footerBase = {
+    applyLabel: layout.footer?.applyLabel ?? 'Nộp hồ sơ',
+    interviewLabel: layout.footer?.interviewLabel ?? 'Địa điểm phỏng vấn',
+    contactLabel: layout.footer?.contactLabel ?? 'Liên hệ',
+    applyInstructions,
+    applyDeadline: applyDeadline || null,
+    applyLinkUrl: applyLinkUrl || null,
+    applyLinkLabel: layout.footer?.applyLinkLabel ?? 'Link ứng tuyển',
+    interviewAddress,
+    contactValue: applyDeadline ? `${contactPhone} • Hạn chót: ${applyDeadline}` : contactPhone,
+    contactPhone,
+  };
+
+  return {
+    layout,
+    header,
+    company: primaryCompany,
+    tagline: layout.tagline ?? '',
+    jobs: jobsForTemplate,
+    hasJobs: jobsForTemplate.length > 0,
+    benefits,
+    hasBenefits: benefits.length > 0,
+    primaryJob: {
+      ...primaryJob,
+      applyInstructions,
+      applyDeadline,
+      applyLinkUrl,
+      contactPhone,
+      interviewAddress,
+    },
+    footer: footerBase,
+  };
+}
+
+function renderTemplate(template, data) {
+  if (typeof template !== 'string' || template.length === 0) {
+    return '';
+  }
+  const context = createTemplateContext(data);
+  return renderTemplateInternal(template, context);
+}
+
+function renderTemplateInternal(template, context) {
+  let output = template;
+  const sectionPattern = /\{\{([#^])\s*([^}]+?)\s*\}\}([\s\S]*?)\{\{\/\s*\2\s*\}\}/g;
+
+  output = output.replace(sectionPattern, (match, type, key, content) => {
+    const value = resolveTemplateValue(context, key.trim());
+    if (type === '#') {
+      if (Array.isArray(value)) {
+        return value
+          .map((item, index) =>
+            renderTemplateInternal(content, createTemplateContext(item, context, { index }))
+          )
+          .join('');
+      }
+      if (isPlainObject(value)) {
+        return renderTemplateInternal(content, createTemplateContext(value, context));
+      }
+      if (value) {
+        return renderTemplateInternal(content, createTemplateContext(value, context));
+      }
+      return '';
+    }
+
+    const isEmptyArray = Array.isArray(value) && value.length === 0;
+    if (!value || isEmptyArray) {
+      return renderTemplateInternal(content, context);
+    }
+    return '';
   });
+
+  output = output.replace(/\{\{\{\s*([^}]+?)\s*\}\}\}/g, (match, key) => {
+    const value = resolveTemplateValue(context, key.trim());
+    return value == null ? '' : String(value);
+  });
+
+  output = output.replace(/\{\{\s*([^{}]+?)\s*\}\}/g, (match, key) => {
+    const trimmed = key.trim();
+    if (!trimmed || ['#', '/', '^'].includes(trimmed[0])) {
+      return match;
+    }
+    const value = resolveTemplateValue(context, trimmed);
+    return value == null ? '' : escapeHtml(String(value));
+  });
+
+  return output;
+}
+
+function createTemplateContext(data, parent = null, meta = {}) {
+  return { data, parent, meta };
+}
+
+function resolveTemplateValue(context, path) {
+  if (!context) {
+    return undefined;
+  }
+
+  const trimmed = path.trim();
+  if (trimmed === '' || trimmed === 'this' || trimmed === '.') {
+    return context.data;
+  }
+  if (trimmed === '@index') {
+    return context.meta?.index ?? 0;
+  }
+  if (trimmed.startsWith('../')) {
+    return resolveTemplateValue(context.parent, trimmed.slice(3));
+  }
+
+  const parts = trimmed.split('.');
+  let currentContext = context;
+  let value = currentContext.data;
+
+  for (let i = 0; i < parts.length; i += 1) {
+    const part = parts[i];
+    if (!part || part === 'this' || part === '.') {
+      continue;
+    }
+    if (part === '..') {
+      currentContext = currentContext.parent ?? currentContext;
+      value = currentContext.data;
+      continue;
+    }
+    if (part === '@index') {
+      return currentContext.meta?.index ?? 0;
+    }
+    if (value == null) {
+      value = undefined;
+      break;
+    }
+    value = value[part];
+  }
+
+  if (value === undefined && context.parent) {
+    return resolveTemplateValue(context.parent, path);
+  }
+
+  return value;
+}
+
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function escapeHtml(value) {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+  return value.replace(/[&<>"']/g, (char) => map[char]);
 }
 
 async function handleExport() {
