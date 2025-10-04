@@ -1,0 +1,31 @@
+{
+  "id": "sales-executive",
+  "title": "Sales Executive",
+  "department": "Khối Kinh doanh",
+  "company": "Công ty TNHH ABC",
+  "location": "Đà Nẵng",
+  "interviewAddress": "Tầng 8, 78 Bạch Đằng, Hải Châu, Đà Nẵng",
+  "contactPhone": "0976 888 999",
+  "apply": {
+    "instructions": "Gửi CV về sales@futureworks.vn hoặc điền form online",
+    "deadline": "30/06/2024",
+    "applyLink": "https://futureworks.vn/careers/sales-executive"
+  },
+  "benefits": [
+    "Thu nhập 12-18 triệu + hoa hồng theo doanh số",
+    "Thưởng nóng khi đạt deal lớn",
+    "Đào tạo kỹ năng bán hàng, giao tiếp",
+    "Du lịch thường niên trong và ngoài nước"
+  ],
+  "description": [
+    "Tìm kiếm, phát triển khách hàng doanh nghiệp",
+    "Tư vấn giải pháp phần mềm FutureWorks cho khách hàng",
+    "Phối hợp cùng đội ngũ Delivery đảm bảo tiến độ triển khai"
+  ],
+  "requirements": [
+    "Kinh nghiệm 1-2 năm trong mảng B2B là lợi thế",
+    "Kỹ năng giao tiếp và trình bày tự tin",
+    "Chủ động, chịu được áp lực doanh số",
+    "Sẵn sàng di chuyển gặp gỡ khách hàng"
+  ]
+}
