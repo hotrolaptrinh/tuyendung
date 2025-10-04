@@ -239,7 +239,6 @@ body {
   height: auto;
   margin: 0 auto;
   background: white;
-  border-radius: 32px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
