@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trình tạo slide tuyển dụng</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <h1>Trình tạo bài đăng tuyển dụng</h1>
+        <p>Chọn công việc, chọn layout và xuất thành ảnh trong vài bước.</p>
+      </div>
+      <div class="header-actions">
+        <button id="reloadDataButton" class="button button-secondary" type="button">
+          Tải dữ liệu mới
+        </button>
+        <span
+          id="dataStatus"
+          class="data-status"
+          data-state="loading"
+          aria-live="polite"
+        >
+          Đang tải dữ liệu...
+        </span>
+        <button id="exportButton" class="button button-primary" disabled>
+          Xuất hình ảnh
+        </button>
+      </div>
+    </header>
+    <main class="app">
+      <section class="panel" aria-labelledby="jobs-title">
+        <h2 id="jobs-title">Chọn công việc</h2>
+        <p class="panel-description">
+          Dữ liệu được lấy từ các tệp JSON trong thư mục <code>data/jobs</code>.
+        </p>
+        <div id="jobsContainer" class="jobs"></div>
+      </section>
+      <section class="panel" aria-labelledby="layouts-title">
+        <h2 id="layouts-title">Chọn layout</h2>
+        <div id="layoutsContainer" class="layouts"></div>
+      </section>
+      <section class="panel panel-preview" aria-labelledby="preview-title">
+        <div class="preview-header">
+          <h2 id="preview-title">Xem trước</h2>
+          <label class="toggle">
+            <input type="checkbox" id="showGridToggle" checked />
+            <span>Hiện lưới canh chỉnh</span>
+          </label>
+        </div>
+        <div id="previewWrapper" class="preview-wrapper">
+          <div id="preview" class="preview" role="img" aria-label="Bản xem trước bài đăng tuyển dụng"></div>
+        </div>
+      </section>
+    </main>
+    <template id="jobCardTemplate">
+      <article class="job-card">
+        <header class="job-card__header">
+          <h3 class="job-card__title"></h3>
+          <p class="job-card__department"></p>
+          <p class="job-card__location"></p>
+        </header>
+        <div class="job-card__body">
+          <section class="job-card__section">
+            <h4>Mô tả công việc</h4>
+            <ul class="job-card__description"></ul>
+          </section>
+          <section class="job-card__section">
+            <h4>Yêu cầu</h4>
+            <ul class="job-card__requirements"></ul>
+          </section>
+        </div>
+      </article>
+    </template>
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
