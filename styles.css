@@ -289,7 +289,7 @@ body {
 }
 
 .preview__body {
-  flex: 1;
+  /* flex: 1; */
   padding: 2rem 3rem 2.5rem;
   display: flex;
   flex-direction: column;
@@ -389,7 +389,7 @@ body {
 }
 
 .job-card__section h4 {
-  margin: 0 0 0.5rem;
+  margin: 10px 0 0.5rem;
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
