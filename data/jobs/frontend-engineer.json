@@ -1,0 +1,31 @@
+{
+  "id": "frontend-engineer",
+  "title": "Frontend Engineer",
+  "department": "Sản phẩm & Công nghệ",
+  "company": "Công ty TNHH ABC",
+  "location": "Hà Nội hoặc làm việc từ xa",
+  "interviewAddress": "Tầng 12, Toà nhà Innovation, 36 Hoàng Cầu, Đống Đa, Hà Nội",
+  "contactPhone": "0981 123 456",
+  "apply": {
+    "instructions": "Gửi CV về hr@futureworks.vn với tiêu đề: [FW_FE]_Họ tên",
+    "deadline": "30/05/2024",
+    "applyLink": "https://futureworks.vn/careers/frontend-engineer"
+  },
+  "benefits": [
+    "Thu nhập cạnh tranh 18-30 triệu + thưởng hiệu suất",
+    "Hybrid 3-2, trợ cấp làm việc từ xa",
+    "Gói bảo hiểm sức khoẻ nâng cao cho bản thân và gia đình",
+    "Ngân sách học tập 12.000.000đ/năm"
+  ],
+  "description": [
+    "Phối hợp với UX/UI Designer để xây dựng giao diện sản phẩm FutureWorks",
+    "Tối ưu hiệu năng, trải nghiệm và accessibility cho người dùng cuối",
+    "Tham gia xây dựng design system nội bộ"
+  ],
+  "requirements": [
+    "Tối thiểu 2 năm kinh nghiệm với React hoặc Vue",
+    "Hiểu biết vững chắc về HTML5, CSS3 và ES6",
+    "Có kinh nghiệm với hệ thống thiết kế, TypeScript là lợi thế",
+    "Khả năng giao tiếp và phối hợp nhóm tốt"
+  ]
+}

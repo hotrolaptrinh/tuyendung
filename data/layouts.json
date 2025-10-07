@@ -1,0 +1,30 @@
+[
+  {
+    "id": "modern",
+    "name": "Gradient hiện đại",
+    "description": "Phong cách tươi trẻ với mảng màu chuyển sắc, phù hợp công ty công nghệ.",
+    "headerTitle": "We're Hiring",
+    "headerSubtitle": "Gia nhập đội ngũ của chúng tôi",
+    "tagline": "Cơ hội bứt phá sự nghiệp cùng đội ngũ giàu nhiệt huyết",
+    "footer": {
+      "applyLabel": "Nộp hồ sơ",
+      "interviewLabel": "Địa điểm phỏng vấn",
+      "contactLabel": "Liên hệ tư vấn"
+    },
+    "template": "\n<header class=\"preview__header\">\n  <h1 class=\"preview__header-title\">Tuyển dụng liên tục không giới hạn số lượng</h1>\n  {{#tagline}}\n  <p class=\"preview__tagline\">{{.}}</p>\n  {{/tagline}}\n</header>\n<section class=\"preview__body\">\n  <div class=\"preview__jobs\">\n    {{#jobs}}\n    <article class=\"job-card\">\n      <header class=\"job-card__header\">\n        <h3 class=\"job-card__title\">{{title}}</h3>\n        {{#department}}<p class=\"job-card__department\">{{.}}</p>{{/department}}\n        {{#location}}<p class=\"job-card__location\">{{.}}</p>{{/location}}\n      </header>\n      <div class=\"job-card__body\">\n        <section class=\"job-card__section\">\n          <h4>Mô tả công việc</h4>\n          <ul class=\"job-card__description\">\n            {{#description}}<li>{{.}}</li>{{/description}}\n            {{^description}}<li>Đang cập nhật.</li>{{/description}}\n          </ul>\n        </section>\n        <section class=\"job-card__section\">\n          <h4>Yêu cầu</h4>\n          <ul class=\"job-card__requirements\">\n            {{#requirements}}<li>{{.}}</li>{{/requirements}}\n            {{^requirements}}<li>Đang cập nhật.</li>{{/requirements}}\n          </ul>\n        </section>\n      </div>\n    </article>\n    {{/jobs}}\n  </div>\n  {{#hasBenefits}}\n  <section class=\"preview__benefits\">\n    <h3 class=\"preview__benefits-title\">Chế độ đãi ngộ</h3>\n    <ul class=\"preview__benefits-list\">\n      {{#benefits}}<li>{{.}}</li>{{/benefits}}\n    </ul>\n  </section>\n  {{/hasBenefits}}\n</section>\n<footer class=\"preview__footer\">\n  <div class=\"preview__footer-info\">\n    <p>LH: 0358.993.264 (Mr. Kha)</p>\n    <p>Phỏng vấn trực tiếp: Thứ 2 - Thứ 7, 8:00 - 10:00</p>\n    <p>Tại Cổng 2 Lô 79, KCN Long Giang, Tân Phước 3, Đồng Tháp</p>\n    <p>Yêu cầu: CCCD gốc, mang giày bít gót, bít mũi</p>\n  </div>\n</footer>\n"
+  },
+  {
+    "id": "minimal",
+    "name": "Tối giản sang trọng",
+    "description": "Tông màu trầm, tập trung vào nội dung, phù hợp doanh nghiệp dịch vụ chuyên nghiệp.",
+    "headerTitle": "Tuyển dụng",
+    "headerSubtitle": "Tìm kiếm đồng đội mới",
+    "tagline": "Môi trường linh hoạt - Chế độ hấp dẫn - Lộ trình rõ ràng",
+    "footer": {
+      "applyLabel": "Cách nộp hồ sơ",
+      "interviewLabel": "Địa chỉ phỏng vấn",
+      "contactLabel": "Hotline"
+    },
+    "template": "\n<header class=\"preview__header\">\n  <h1 class=\"preview__header-title\">Tuyển dụng liên tục không giới hạn số lượng</h1>\n</header>\n<section class=\"preview__body\">\n  {{#tagline}}\n  <p class=\"preview__tagline preview__tagline--minimal\">{{.}}</p>\n  {{/tagline}}\n  <div class=\"preview__jobs preview__jobs--stacked\">\n    {{#jobs}}\n    <article class=\"job-card job-card--minimal\">\n      <header class=\"job-card__header\">\n        <h3 class=\"job-card__title\">{{title}}</h3>\n        {{#department}}<p class=\"job-card__department\">{{.}}</p>{{/department}}\n        {{#location}}<p class=\"job-card__location\">{{.}}</p>{{/location}}\n      </header>\n      <div class=\"job-card__body\">\n        <section class=\"job-card__section\">\n          <h4>Mô tả công việc</h4>\n          <ul class=\"job-card__description\">\n            {{#description}}<li>{{.}}</li>{{/description}}\n            {{^description}}<li>Đang cập nhật.</li>{{/description}}\n          </ul>\n        </section>\n        <section class=\"job-card__section\">\n          <h4>Yêu cầu</h4>\n          <ul class=\"job-card__requirements\">\n            {{#requirements}}<li>{{.}}</li>{{/requirements}}\n            {{^requirements}}<li>Đang cập nhật.</li>{{/requirements}}\n          </ul>\n        </section>\n      </div>\n    </article>\n    {{/jobs}}\n  </div>\n  {{#hasBenefits}}\n  <section class=\"preview__benefits preview__benefits--minimal\">\n    <h3 class=\"preview__benefits-title\">Phúc lợi tiêu biểu</h3>\n    <ul class=\"preview__benefits-list\">\n      {{#benefits}}<li>{{.}}</li>{{/benefits}}\n    </ul>\n  </section>\n  {{/hasBenefits}}\n</section>\n<footer class=\"preview__footer preview__footer--minimal\">\n  <div class=\"preview__footer-info\">\n    <p>LH: 0358.993.264 (Mr. Kha)</p>\n    <p>Phỏng vấn trực tiếp: Thứ 2 - Thứ 7, 8:00 - 10:00</p>\n    <p>Tại Cổng 2 Lô 79, KCN Long Giang, Tân Phước 3, Đồng Tháp</p>\n    <p>Yêu cầu: CCCD gốc, mang giày bít gót, bít mũi</p>\n  </div>\n</footer>\n"
+  }
+]

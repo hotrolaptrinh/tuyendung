@@ -1,0 +1,18 @@
+[
+  {
+    "id": "frontend-engineer",
+    "file": "frontend-engineer.json"
+  },
+  {
+    "id": "hr-generalist",
+    "file": "hr-generalist.json"
+  },
+  {
+    "id": "sales-executive",
+    "file": "sales-executive.json"
+  },
+  {
+    "id": "production-worker",
+    "file": "production-worker.json"
+  }
+]
