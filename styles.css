@@ -328,58 +328,21 @@ body {
   background: rgba(0, 0, 0, 0.04);
   padding: 1.5rem 3rem;
   display: grid;
-  gap: 0.5rem;
+  gap: 0.75rem;
   font-size: 1rem;
 }
 
-.preview__footer strong {
-  color: var(--color-primary-dark);
-}
-
-.preview__footer-items {
+.preview__footer-info {
   display: grid;
-  gap: 0.75rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
-
-.preview__footer-item {
-  background: white;
-  border-radius: 16px;
-  padding: 1rem 1.25rem;
-  border: 1px solid rgba(23, 32, 63, 0.08);
-  box-shadow: 0 10px 24px rgba(23, 32, 63, 0.08);
-  display: grid;
-  gap: 0.4rem;
-}
-
-.preview__footer-item span {
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  font-weight: 600;
-}
-
-.preview__footer-item p {
+  gap: 0.35rem;
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.45;
+}
+
+.preview__footer-info p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
   color: var(--color-text);
-  word-break: break-word;
-}
-
-.preview__footer-item p strong {
-  color: var(--color-primary-dark);
-}
-
-.preview__footer-item a {
-  color: var(--color-primary);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.preview__footer-item a:hover {
-  text-decoration: underline;
 }
 
 .preview__empty {
@@ -651,23 +614,14 @@ body {
   body:not(.is-exporting) .preview__footer {
     padding: 1.4rem 2rem;
     gap: 0.6rem;
+  }
+
+  body:not(.is-exporting) .preview__footer-info {
+    gap: 0.45rem;
+  }
+
+  body:not(.is-exporting) .preview__footer-info p {
     font-size: 0.6rem;
-  }
-
-  body:not(.is-exporting) .preview__footer-items {
-    gap: 0.65rem;
-  }
-
-  body:not(.is-exporting) .preview__footer-item {
-    padding: 0.9rem 1rem;
-  }
-
-  body:not(.is-exporting) .preview__footer-item span {
-    font-size: 0.45rem;
-  }
-
-  body:not(.is-exporting) .preview__footer-item p {
-    font-size: 0.55rem;
   }
 }
 
@@ -724,10 +678,9 @@ body {
 
   body:not(.is-exporting) .preview__footer {
     padding: 1.2rem 1.5rem;
-    font-size: 0.55rem;
   }
 
-  body:not(.is-exporting) .preview__footer-item {
-    padding: 0.8rem 0.9rem;
+  body:not(.is-exporting) .preview__footer-info p {
+    font-size: 0.55rem;
   }
 }

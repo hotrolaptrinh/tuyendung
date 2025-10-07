@@ -10,5 +10,9 @@
   {
     "id": "sales-executive",
     "file": "sales-executive.json"
+  },
+  {
+    "id": "production-worker",
+    "file": "production-worker.json"
   }
 ]

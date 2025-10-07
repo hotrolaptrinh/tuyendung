@@ -1,0 +1,32 @@
+{
+  "id": "production-worker",
+  "title": "Công Nhân Sản Xuất - Ca Hành Chánh",
+  "department": "Nhà máy sản xuất",
+  "company": "Công ty TNHH Giày APACHE Việt Nam",
+  "location": "Lô 79, KCN Long Giang, xã Tân Phước 3, Đồng Tháp",
+  "interviewAddress": "Cổng 2 Lô 79, KCN Long Giang, Tân Phước 3, Đồng Tháp",
+  "contactPhone": "0358.993.264 (Mr. Kha)",
+  "apply": {
+    "instructions": "Phỏng vấn trực tiếp từ 8:00 - 10:00, Thứ Hai - Thứ Bảy tại Cổng 2 Công ty",
+    "deadline": null,
+    "applyLink": null
+  },
+  "benefits": [
+    "Thu nhập 7.5 - 8.5 triệu đồng/tháng (tăng ca tự nguyện theo lịch sản xuất)",
+    "Tham gia đầy đủ BHXH, công đoàn, nhận quà tặng dịp lễ và thưởng tháng 13",
+    "Cơm trưa miễn phí, hỗ trợ đăng ký xe ca đưa rước các tuyến Đồng Tháp, Tiền Giang, Vĩnh Long, Tây Ninh, TP.HCM",
+    "Thưởng động viên người mới nhận việc 500.000 VNĐ",
+    "Thưởng giới thiệu người thân vào làm việc 500.000 VNĐ",
+    "Hỗ trợ nhà trọ 500.000 VNĐ/tháng trong 3 tháng đầu"
+  ],
+  "description": [
+    "Thời gian làm việc hành chính: 7:30 - 16:30 (tăng ca tự nguyện theo lịch sản xuất)",
+    "Thực hiện công việc tại các xưởng sản xuất giày theo đơn hàng của công ty",
+    "Phối hợp với tổ, chuyền đảm bảo tiến độ và chất lượng sản phẩm"
+  ],
+  "requirements": [
+    "Không yêu cầu tay nghề, kinh nghiệm hay bằng cấp",
+    "Sức khỏe tốt, sẵn sàng làm việc trong môi trường sản xuất",
+    "Tuân thủ nội quy, quy trình an toàn lao động của nhà máy"
+  ]
+}
