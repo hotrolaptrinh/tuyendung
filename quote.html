@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cute Quote Card Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600&family=Comic+Neue:wght@400;700&family=Dancing+Script:wght@500;600;700&family=Fredoka:wght@500;600&family=Handlee&family=Inter:wght@500;600&family=Kalam:wght@400;700&family=Nunito:wght@500;600&family=Patrick+Hand&family=Quicksand:wght@500;600&family=Satisfy&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Nunito", "Comic Neue", "Inter", system-ui;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fdf2ff, #fff4e5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app-shell {
+      width: min(1200px, 100%);
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      align-items: start;
+    }
+
+    .control-panel {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: 0 18px 38px rgba(255, 163, 234, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border: 2px solid rgba(255, 200, 229, 0.6);
+    }
+
+    .control-panel h1 {
+      margin: 0 0 8px;
+      font-size: 1.6rem;
+      color: #8b3a71;
+      font-weight: 700;
+    }
+
+    label {
+      font-weight: 600;
+      color: #70445f;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 104px;
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid rgba(230, 185, 205, 0.7);
+      font-size: 1rem;
+      font-family: inherit;
+      background: #fff9ff;
+    }
+
+    select,
+    input[type="range"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(226, 180, 210, 0.6);
+      background: #fffafc;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .range-display {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: #8f5473;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    button {
+      flex: 1;
+      min-width: 150px;
+      padding: 12px 16px;
+      border-radius: 16px;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button.render {
+      background: linear-gradient(135deg, #ffd1ec, #ffe4f8);
+      color: #8b2f68;
+      box-shadow: 0 12px 24px rgba(255, 128, 188, 0.3);
+    }
+
+    button.download {
+      background: linear-gradient(135deg, #c8f6ff, #e8fffa);
+      color: #256d74;
+      box-shadow: 0 12px 24px rgba(120, 213, 214, 0.3);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 28px rgba(0, 0, 0, 0.12);
+    }
+
+    .canvas-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.7);
+      box-shadow: inset 0 0 0 2px rgba(255, 200, 229, 0.4);
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      border-radius: 28px;
+      border: 8px solid rgba(255, 195, 228, 0.6);
+      box-shadow: 0 30px 60px rgba(233, 170, 220, 0.35);
+      background: white;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 16px;
+      }
+
+      .control-panel {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <section class="control-panel">
+      <h1>🎀 Cute Quote Card Generator</h1>
+      <label>
+        Nhập câu quote thật hay nhé 💕
+        <textarea id="quoteInput" placeholder="Hãy viết điều khiến bạn mỉm cười..."></textarea>
+      </label>
+
+      <label>
+        Chọn font chữ:
+        <select id="fontSelect">
+          <option value='"Comic Neue", cursive' data-font="Comic Neue">Comic Neue</option>
+          <option value='"Comic Sans MS", cursive' data-font="Comic Sans MS">Comic Sans MS</option>
+          <option value='"Nunito", sans-serif' data-font="Nunito">Nunito</option>
+          <option value='"Quicksand", sans-serif' data-font="Quicksand">Quicksand</option>
+          <option value='"Fredoka", sans-serif' data-font="Fredoka">Fredoka</option>
+          <option value='"Baloo 2", cursive' data-font="Baloo 2">Baloo 2</option>
+          <option value='"Kalam", cursive' data-font="Kalam">Kalam</option>
+          <option value='"Inter", sans-serif' data-font="Inter">Inter</option>
+          <option value='"Patrick Hand", cursive' data-font="Patrick Hand">Patrick Hand</option>
+          <option value='"Handlee", cursive' data-font="Handlee">Handlee</option>
+          <option value='"Dancing Script", cursive' data-font="Dancing Script">Dancing Script</option>
+          <option value='"Satisfy", cursive' data-font="Satisfy">Satisfy</option>
+        </select>
+      </label>
+
+      <label>
+        Kích thước chữ:
+        <div class="range-display">
+          <span>Nhỏ</span>
+          <span id="fontSizeLabel">52px</span>
+        </div>
+        <input type="range" id="fontSizeRange" min="32" max="96" step="2" value="52" />
+      </label>
+
+      <label>
+        Bảng màu pastel:
+        <select id="paletteSelect">
+          <option value="pastelPink">Pastel Hồng</option>
+          <option value="pastelPurple">Pastel Tím</option>
+          <option value="pastelMint">Pastel Xanh Mint</option>
+          <option value="pastelPeach">Pastel Cam Kem</option>
+        </select>
+      </label>
+
+      <label>
+        Kích thước ảnh:
+        <select id="sizeSelect">
+          <option value="square1080">Facebook Feed Square 1080 x 1080</option>
+          <option value="story1080">Facebook Story / Reels / TikTok 1080 x 1920</option>
+          <option value="landscape1920">Landscape Social 1920 x 1080</option>
+        </select>
+      </label>
+
+      <div class="button-group">
+        <button class="render" id="renderBtn">Render / Preview</button>
+        <button class="download" id="downloadBtn">Download PNG</button>
+      </div>
+    </section>
+
+    <section class="canvas-wrapper">
+      <canvas id="quoteCanvas" width="1080" height="1080"></canvas>
+    </section>
+  </div>
+
+  <script>
+    // Palette definitions with harmonious pastel colors.
+    const palettes = {
+      pastelPink: {
+        gradientStart: "#fff6fb",
+        gradientEnd: "#fffbe8",
+        paperFill: "rgba(255, 255, 255, 0.92)",
+        paperBorder: "#ffd4ec",
+        lineColor: "rgba(255, 170, 220, 0.35)",
+        textColor: "#4a2141",
+        heartColor: "#ff7bb6",
+        starColor: "#ffcf4d",
+        sparkleColor: "#9acbff",
+      },
+      pastelPurple: {
+        gradientStart: "#f3ecff",
+        gradientEnd: "#e5fff8",
+        paperFill: "rgba(255, 255, 255, 0.94)",
+        paperBorder: "#d7c9ff",
+        lineColor: "rgba(200, 180, 255, 0.35)",
+        textColor: "#402a5f",
+        heartColor: "#a07bff",
+        starColor: "#ffe066",
+        sparkleColor: "#c0f4ff",
+      },
+      pastelMint: {
+        gradientStart: "#ecfffb",
+        gradientEnd: "#fff4fc",
+        paperFill: "rgba(255, 255, 255, 0.94)",
+        paperBorder: "#baf4e6",
+        lineColor: "rgba(168, 234, 210, 0.4)",
+        textColor: "#2f4e4a",
+        heartColor: "#ff94c2",
+        starColor: "#ffd86f",
+        sparkleColor: "#9bd8ff",
+      },
+      pastelPeach: {
+        gradientStart: "#fff3ea",
+        gradientEnd: "#fffbe9",
+        paperFill: "rgba(255, 255, 255, 0.93)",
+        paperBorder: "#ffd4b8",
+        lineColor: "rgba(255, 199, 153, 0.38)",
+        textColor: "#5e3a2e",
+        heartColor: "#ff8ba7",
+        starColor: "#ffe08b",
+        sparkleColor: "#ffcdde",
+      },
+    };
+
+    // Output sizes available for quick selection.
+    const canvasSizes = {
+      square1080: { width: 1080, height: 1080 },
+      story1080: { width: 1080, height: 1920 },
+      landscape1920: { width: 1920, height: 1080 },
+    };
+
+    // UI references.
+    const quoteInput = document.getElementById("quoteInput");
+    const fontSelect = document.getElementById("fontSelect");
+    const fontSizeRange = document.getElementById("fontSizeRange");
+    const fontSizeLabel = document.getElementById("fontSizeLabel");
+    const paletteSelect = document.getElementById("paletteSelect");
+    const sizeSelect = document.getElementById("sizeSelect");
+    const renderBtn = document.getElementById("renderBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const canvas = document.getElementById("quoteCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Default quote to inspire the user on first render.
+    quoteInput.value = "Hãy yêu những điều nhỏ xinh khiến trái tim bạn nở hoa 💖";
+
+    // Update slider label when the font size changes.
+    const updateFontSizeLabel = () => {
+      fontSizeLabel.textContent = `${fontSizeRange.value}px`;
+    };
+
+    updateFontSizeLabel();
+
+    fontSizeRange.addEventListener("input", () => {
+      updateFontSizeLabel();
+      renderAll();
+    });
+
+    const fontLoadCache = new Map();
+
+    function getPrimaryFontName(optionEl) {
+      if (!optionEl) return "";
+      if (optionEl.dataset.font) return optionEl.dataset.font;
+      return optionEl.value.split(",")[0].replace(/['"]/g, "").trim();
+    }
+
+    function ensureFontLoaded(fontName) {
+      if (!fontName || !document.fonts) return Promise.resolve();
+      if (!fontLoadCache.has(fontName)) {
+        const loadPromise = document.fonts
+          .load(`48px "${fontName}"`)
+          .catch(() => undefined);
+        fontLoadCache.set(fontName, loadPromise);
+      }
+      return fontLoadCache.get(fontName);
+    }
+
+    fontSelect.addEventListener("change", async () => {
+      const optionEl = fontSelect.selectedOptions[0];
+      await ensureFontLoaded(getPrimaryFontName(optionEl));
+      renderAll();
+    });
+    paletteSelect.addEventListener("change", renderAll);
+
+    sizeSelect.addEventListener("change", () => {
+      const { width, height } = canvasSizes[sizeSelect.value];
+      canvas.width = width;
+      canvas.height = height;
+      renderAll();
+    });
+
+    renderBtn.addEventListener("click", async () => {
+      await ensureFontLoaded(getPrimaryFontName(fontSelect.selectedOptions[0]));
+      renderAll();
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      // Trigger a download of the current canvas content as PNG.
+      const link = document.createElement("a");
+      link.download = "quote.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+
+    /**
+     * Draw the dreamy gradient background.
+     */
+    function drawBackground(palette) {
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, palette.gradientStart);
+      gradient.addColorStop(1, palette.gradientEnd);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    /**
+     * Draw the rounded paper sheet placed inside the canvas.
+     */
+    function drawPaper(palette, metrics) {
+      const { x, y, width, height, radius } = metrics;
+      ctx.save();
+      ctx.beginPath();
+      if (ctx.roundRect) {
+        ctx.roundRect(x, y, width, height, radius);
+      } else {
+        // Manual rounded rectangle path for wider browser support.
+        const r = radius;
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + width - r, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+        ctx.lineTo(x + width, y + height - r);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+        ctx.lineTo(x + r, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+      }
+      ctx.fillStyle = palette.paperFill;
+      ctx.fill();
+      ctx.lineWidth = Math.max(4, canvas.width * 0.004);
+      ctx.strokeStyle = palette.paperBorder;
+      ctx.stroke();
+      ctx.shadowColor = "rgba(200, 170, 200, 0.35)";
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetY = 12;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    /**
+     * Draw equally spaced notebook-style lines across the paper.
+     */
+    function drawLines(palette, metrics, lineHeight) {
+      const { x, y, width, height, padding } = metrics;
+      const firstLineY = y + padding;
+      const lastLineY = y + height - padding;
+
+      ctx.save();
+      ctx.strokeStyle = palette.lineColor;
+      ctx.lineWidth = Math.max(1, canvas.width * 0.002);
+      ctx.beginPath();
+
+      for (let lineY = firstLineY; lineY <= lastLineY; lineY += lineHeight) {
+        ctx.moveTo(x + padding * 0.5, lineY);
+        ctx.lineTo(x + width - padding * 0.5, lineY);
+      }
+
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    /**
+     * Draw adorable doodles (heart, star, sparkle) to decorate the paper.
+     */
+    function drawDoodles(palette, metrics) {
+      const { x, y, width, height, padding } = metrics;
+
+      ctx.save();
+      ctx.translate(0, 0);
+
+      // Heart doodle (top-left)
+      const heartX = x + padding * 0.5;
+      const heartY = y + padding * 0.7;
+      const heartSize = Math.min(width, height) * 0.06;
+      ctx.fillStyle = palette.heartColor;
+      ctx.beginPath();
+      ctx.moveTo(heartX, heartY + heartSize / 4);
+      ctx.bezierCurveTo(
+        heartX - heartSize / 2,
+        heartY - heartSize / 2,
+        heartX - heartSize,
+        heartY + heartSize / 3,
+        heartX,
+        heartY + heartSize
+      );
+      ctx.bezierCurveTo(
+        heartX + heartSize,
+        heartY + heartSize / 3,
+        heartX + heartSize / 2,
+        heartY - heartSize / 2,
+        heartX,
+        heartY + heartSize / 4
+      );
+      ctx.fill();
+
+      // Star doodle (top-right)
+      const starX = x + width - padding * 0.6;
+      const starY = y + padding * 0.6;
+      const starOuter = Math.min(width, height) * 0.05;
+      const starInner = starOuter * 0.45;
+      ctx.fillStyle = palette.starColor;
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const outerAngle = ((Math.PI * 2) / 5) * i - Math.PI / 2;
+        const innerAngle = outerAngle + Math.PI / 5;
+        ctx.lineTo(starX + Math.cos(outerAngle) * starOuter, starY + Math.sin(outerAngle) * starOuter);
+        ctx.lineTo(starX + Math.cos(innerAngle) * starInner, starY + Math.sin(innerAngle) * starInner);
+      }
+      ctx.closePath();
+      ctx.fill();
+
+      // Sparkle doodle (bottom-right)
+      const sparkleX = x + width - padding;
+      const sparkleY = y + height - padding * 0.8;
+      const sparkleSize = Math.min(width, height) * 0.045;
+      ctx.fillStyle = palette.sparkleColor;
+      ctx.beginPath();
+      ctx.moveTo(sparkleX, sparkleY - sparkleSize);
+      ctx.quadraticCurveTo(sparkleX + sparkleSize * 0.3, sparkleY - sparkleSize * 0.3, sparkleX + sparkleSize, sparkleY);
+      ctx.quadraticCurveTo(sparkleX + sparkleSize * 0.3, sparkleY + sparkleSize * 0.3, sparkleX, sparkleY + sparkleSize);
+      ctx.quadraticCurveTo(sparkleX - sparkleSize * 0.3, sparkleY + sparkleSize * 0.3, sparkleX - sparkleSize, sparkleY);
+      ctx.quadraticCurveTo(sparkleX - sparkleSize * 0.3, sparkleY - sparkleSize * 0.3, sparkleX, sparkleY - sparkleSize);
+      ctx.fill();
+
+      // Tiny hearts bottom-left for balance
+      const tinyHeartX = x + padding * 0.7;
+      const tinyHeartY = y + height - padding * 0.8;
+      const tinySize = heartSize * 0.5;
+      ctx.fillStyle = palette.heartColor;
+      ctx.beginPath();
+      ctx.moveTo(tinyHeartX, tinyHeartY + tinySize / 4);
+      ctx.bezierCurveTo(
+        tinyHeartX - tinySize / 2,
+        tinyHeartY - tinySize / 2,
+        tinyHeartX - tinySize,
+        tinyHeartY + tinySize / 3,
+        tinyHeartX,
+        tinyHeartY + tinySize
+      );
+      ctx.bezierCurveTo(
+        tinyHeartX + tinySize,
+        tinyHeartY + tinySize / 3,
+        tinyHeartX + tinySize / 2,
+        tinyHeartY - tinySize / 2,
+        tinyHeartX,
+        tinyHeartY + tinySize / 4
+      );
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    /**
+     * Break the user's quote into lines that fit the available width.
+     */
+    function wrapText(text, maxWidth, fontSize, fontFamily) {
+      ctx.save();
+      ctx.font = `${fontSize}px ${fontFamily}`;
+      const words = text.trim().split(/\s+/);
+      const lines = [];
+      let currentLine = "";
+
+      for (const word of words) {
+        const tentative = currentLine ? `${currentLine} ${word}` : word;
+        const { width } = ctx.measureText(tentative);
+        if (width > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = tentative;
+        }
+      }
+
+      if (currentLine) {
+        lines.push(currentLine);
+      }
+
+      ctx.restore();
+      return lines;
+    }
+
+    /**
+     * Draw the wrapped quote text aligned with the notebook lines.
+     */
+    function drawQuoteText(palette, metrics, lines, fontSize, fontFamily, lineHeight) {
+      const { x, y, width, padding } = metrics;
+      const textAreaWidth = width - padding * 2;
+      const startY = y + padding + lineHeight / 2;
+
+      ctx.save();
+      ctx.font = `${fontSize}px ${fontFamily}`;
+      ctx.fillStyle = palette.textColor;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      const centerX = x + width / 2;
+
+      lines.forEach((line, index) => {
+        const lineY = startY + index * lineHeight;
+        ctx.fillText(line, centerX, lineY);
+      });
+
+      ctx.restore();
+    }
+
+    /**
+     * Master render function orchestrating all drawing steps.
+     */
+    function renderAll() {
+      const palette = palettes[paletteSelect.value];
+      const fontFamily = fontSelect.value;
+      const fontSize = parseInt(fontSizeRange.value, 10);
+      const lineHeight = fontSize * 1.25;
+
+      // Paper metrics scale with canvas size for proportional layout.
+      const paperMargin = canvas.width * 0.075;
+      const paperWidth = canvas.width - paperMargin * 2;
+      const paperHeight = canvas.height - paperMargin * 2;
+      const paperMetrics = {
+        x: paperMargin,
+        y: paperMargin,
+        width: paperWidth,
+        height: paperHeight,
+        radius: Math.min(canvas.width, canvas.height) * 0.06,
+        padding: Math.min(canvas.width, canvas.height) * 0.075,
+      };
+
+      const maxTextWidth = paperMetrics.width - paperMetrics.padding * 2;
+      const quoteText = quoteInput.value.trim() || "Bạn thật dễ thương khi mỉm cười ✨";
+      const lines = wrapText(quoteText, maxTextWidth, fontSize, fontFamily);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawBackground(palette);
+      drawPaper(palette, paperMetrics);
+      drawLines(palette, paperMetrics, lineHeight);
+      drawDoodles(palette, paperMetrics);
+      drawQuoteText(palette, paperMetrics, lines, fontSize, fontFamily, lineHeight);
+    }
+
+    // Render initial state to show preview immediately.
+    ensureFontLoaded(getPrimaryFontName(fontSelect.selectedOptions[0])).then(renderAll);
+  </script>
+</body>
+</html>
