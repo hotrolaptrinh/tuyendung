@@ -4,10 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cute Quote Card Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600&family=Comic+Neue:wght@400;700&family=Dancing+Script:wght@500;600;700&family=Fredoka:wght@500;600&family=Handlee&family=Inter:wght@500;600&family=Kalam:wght@400;700&family=Nunito:wght@500;600&family=Patrick+Hand&family=Quicksand:wght@500;600&family=Satisfy&display=swap"
+    rel="stylesheet"
+  />
   <style>
     :root {
       color-scheme: light;
-      font-family: "Inter", "Comic Neue", "Comic Sans MS", system-ui;
+      font-family: "Nunito", "Comic Neue", "Inter", system-ui;
     }
 
     body {
@@ -57,7 +63,7 @@
 
     textarea {
       resize: vertical;
-      min-height: 120px;
+      min-height: 104px;
       border-radius: 16px;
       padding: 16px;
       border: 1px solid rgba(230, 185, 205, 0.7);
@@ -162,11 +168,18 @@
       <label>
         Chọn font chữ:
         <select id="fontSelect">
-          <option value="\"Comic Neue\", cursive">Comic Neue</option>
-          <option value="\"Comic Sans MS\", cursive">Comic Sans MS</option>
-          <option value="Inter, sans-serif">Inter</option>
-          <option value="\"Dancing Script\", cursive">Dancing Script</option>
-          <option value="\"Patrick Hand\", cursive">Handwriting Style</option>
+          <option value='"Comic Neue", cursive' data-font="Comic Neue">Comic Neue</option>
+          <option value='"Comic Sans MS", cursive' data-font="Comic Sans MS">Comic Sans MS</option>
+          <option value='"Nunito", sans-serif' data-font="Nunito">Nunito</option>
+          <option value='"Quicksand", sans-serif' data-font="Quicksand">Quicksand</option>
+          <option value='"Fredoka", sans-serif' data-font="Fredoka">Fredoka</option>
+          <option value='"Baloo 2", cursive' data-font="Baloo 2">Baloo 2</option>
+          <option value='"Kalam", cursive' data-font="Kalam">Kalam</option>
+          <option value='"Inter", sans-serif' data-font="Inter">Inter</option>
+          <option value='"Patrick Hand", cursive' data-font="Patrick Hand">Patrick Hand</option>
+          <option value='"Handlee", cursive' data-font="Handlee">Handlee</option>
+          <option value='"Dancing Script", cursive' data-font="Dancing Script">Dancing Script</option>
+          <option value='"Satisfy", cursive' data-font="Satisfy">Satisfy</option>
         </select>
       </label>
 
@@ -174,9 +187,9 @@
         Kích thước chữ:
         <div class="range-display">
           <span>Nhỏ</span>
-          <span id="fontSizeLabel">56px</span>
+          <span id="fontSizeLabel">52px</span>
         </div>
-        <input type="range" id="fontSizeRange" min="36" max="96" step="2" value="56" />
+        <input type="range" id="fontSizeRange" min="32" max="96" step="2" value="52" />
       </label>
 
       <label>
@@ -292,7 +305,30 @@
       renderAll();
     });
 
-    fontSelect.addEventListener("change", renderAll);
+    const fontLoadCache = new Map();
+
+    function getPrimaryFontName(optionEl) {
+      if (!optionEl) return "";
+      if (optionEl.dataset.font) return optionEl.dataset.font;
+      return optionEl.value.split(",")[0].replace(/['"]/g, "").trim();
+    }
+
+    function ensureFontLoaded(fontName) {
+      if (!fontName || !document.fonts) return Promise.resolve();
+      if (!fontLoadCache.has(fontName)) {
+        const loadPromise = document.fonts
+          .load(`48px "${fontName}"`)
+          .catch(() => undefined);
+        fontLoadCache.set(fontName, loadPromise);
+      }
+      return fontLoadCache.get(fontName);
+    }
+
+    fontSelect.addEventListener("change", async () => {
+      const optionEl = fontSelect.selectedOptions[0];
+      await ensureFontLoaded(getPrimaryFontName(optionEl));
+      renderAll();
+    });
     paletteSelect.addEventListener("change", renderAll);
 
     sizeSelect.addEventListener("change", () => {
@@ -302,7 +338,10 @@
       renderAll();
     });
 
-    renderBtn.addEventListener("click", renderAll);
+    renderBtn.addEventListener("click", async () => {
+      await ensureFontLoaded(getPrimaryFontName(fontSelect.selectedOptions[0]));
+      renderAll();
+    });
 
     downloadBtn.addEventListener("click", () => {
       // Trigger a download of the current canvas content as PNG.
@@ -530,10 +569,10 @@
       const palette = palettes[paletteSelect.value];
       const fontFamily = fontSelect.value;
       const fontSize = parseInt(fontSizeRange.value, 10);
-      const lineHeight = fontSize * 1.4;
+      const lineHeight = fontSize * 1.25;
 
       // Paper metrics scale with canvas size for proportional layout.
-      const paperMargin = canvas.width * 0.12;
+      const paperMargin = canvas.width * 0.075;
       const paperWidth = canvas.width - paperMargin * 2;
       const paperHeight = canvas.height - paperMargin * 2;
       const paperMetrics = {
@@ -542,7 +581,7 @@
         width: paperWidth,
         height: paperHeight,
         radius: Math.min(canvas.width, canvas.height) * 0.06,
-        padding: Math.min(canvas.width, canvas.height) * 0.11,
+        padding: Math.min(canvas.width, canvas.height) * 0.075,
       };
 
       const maxTextWidth = paperMetrics.width - paperMetrics.padding * 2;
@@ -559,7 +598,7 @@
     }
 
     // Render initial state to show preview immediately.
-    renderAll();
+    ensureFontLoaded(getPrimaryFontName(fontSelect.selectedOptions[0])).then(renderAll);
   </script>
 </body>
 </html>
