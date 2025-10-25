@@ -7,13 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600&family=Comic+Neue:wght@400;700&family=Dancing+Script:wght@500;600;700&family=Fredoka:wght@500;600&family=Handlee&family=Inter:wght@500;600&family=Kalam:wght@400;700&family=Nunito:wght@500;600&family=Patrick+Hand&family=Quicksand:wght@500;600&family=Satisfy&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600&family=Comfortaa:wght@500;600&family=Grandstander:wght@500;600&family=Inter:wght@500;600&family=Lora:wght@500;600&family=Merienda:wght@500;700&family=Merriweather:wght@500;700&family=Nunito:wght@500;600&family=Quicksand:wght@500;600&family=Signika:wght@500;600&display=swap&subset=vietnamese"
     rel="stylesheet"
   />
   <style>
     :root {
       color-scheme: light;
-      font-family: "Nunito", "Comic Neue", "Inter", system-ui;
+      font-family: "Be Vietnam Pro", "Nunito", "Inter", system-ui;
     }
 
     body {
@@ -168,18 +168,16 @@
       <label>
         Chọn font chữ:
         <select id="fontSelect">
-          <option value='"Comic Neue", cursive' data-font="Comic Neue">Comic Neue</option>
-          <option value='"Comic Sans MS", cursive' data-font="Comic Sans MS">Comic Sans MS</option>
+          <option value='"Be Vietnam Pro", sans-serif' data-font="Be Vietnam Pro">Be Vietnam Pro</option>
           <option value='"Nunito", sans-serif' data-font="Nunito">Nunito</option>
           <option value='"Quicksand", sans-serif' data-font="Quicksand">Quicksand</option>
-          <option value='"Fredoka", sans-serif' data-font="Fredoka">Fredoka</option>
-          <option value='"Baloo 2", cursive' data-font="Baloo 2">Baloo 2</option>
-          <option value='"Kalam", cursive' data-font="Kalam">Kalam</option>
           <option value='"Inter", sans-serif' data-font="Inter">Inter</option>
-          <option value='"Patrick Hand", cursive' data-font="Patrick Hand">Patrick Hand</option>
-          <option value='"Handlee", cursive' data-font="Handlee">Handlee</option>
-          <option value='"Dancing Script", cursive' data-font="Dancing Script">Dancing Script</option>
-          <option value='"Satisfy", cursive' data-font="Satisfy">Satisfy</option>
+          <option value='"Comfortaa", sans-serif' data-font="Comfortaa">Comfortaa</option>
+          <option value='"Grandstander", cursive' data-font="Grandstander">Grandstander</option>
+          <option value='"Merienda", cursive' data-font="Merienda">Merienda</option>
+          <option value='"Merriweather", serif' data-font="Merriweather">Merriweather</option>
+          <option value='"Lora", serif' data-font="Lora">Lora</option>
+          <option value='"Signika", sans-serif' data-font="Signika">Signika</option>
         </select>
       </label>
 
@@ -190,6 +188,15 @@
           <span id="fontSizeLabel">52px</span>
         </div>
         <input type="range" id="fontSizeRange" min="32" max="96" step="2" value="52" />
+      </label>
+
+      <label>
+        Khoảng cách dòng:
+        <div class="range-display">
+          <span>Sát</span>
+          <span id="lineSpacingLabel">1.30</span>
+        </div>
+        <input type="range" id="lineSpacingRange" min="1" max="2" step="0.05" value="1.3" />
       </label>
 
       <label>
@@ -289,6 +296,8 @@
     const downloadBtn = document.getElementById("downloadBtn");
     const canvas = document.getElementById("quoteCanvas");
     const ctx = canvas.getContext("2d");
+    const lineSpacingRange = document.getElementById("lineSpacingRange");
+    const lineSpacingLabel = document.getElementById("lineSpacingLabel");
 
     // Default quote to inspire the user on first render.
     quoteInput.value = "Hãy yêu những điều nhỏ xinh khiến trái tim bạn nở hoa 💖";
@@ -302,6 +311,17 @@
 
     fontSizeRange.addEventListener("input", () => {
       updateFontSizeLabel();
+      renderAll();
+    });
+
+    const updateLineSpacingLabel = () => {
+      lineSpacingLabel.textContent = Number(lineSpacingRange.value).toFixed(2);
+    };
+
+    updateLineSpacingLabel();
+
+    lineSpacingRange.addEventListener("input", () => {
+      updateLineSpacingLabel();
       renderAll();
     });
 
@@ -330,6 +350,7 @@
       renderAll();
     });
     paletteSelect.addEventListener("change", renderAll);
+    quoteInput.addEventListener("input", renderAll);
 
     sizeSelect.addEventListener("change", () => {
       const { width, height } = canvasSizes[sizeSelect.value];
@@ -510,29 +531,39 @@
     }
 
     /**
-     * Break the user's quote into lines that fit the available width.
+     * Break the user's quote into lines that fit the available width,
+     * respecting manual line breaks from the textarea.
      */
     function wrapText(text, maxWidth, fontSize, fontFamily) {
       ctx.save();
       ctx.font = `${fontSize}px ${fontFamily}`;
-      const words = text.trim().split(/\s+/);
+      const paragraphs = text.replace(/\r/g, "").split("\n");
       const lines = [];
-      let currentLine = "";
 
-      for (const word of words) {
-        const tentative = currentLine ? `${currentLine} ${word}` : word;
-        const { width } = ctx.measureText(tentative);
-        if (width > maxWidth && currentLine) {
-          lines.push(currentLine);
-          currentLine = word;
-        } else {
-          currentLine = tentative;
+      paragraphs.forEach((paragraph) => {
+        const trimmed = paragraph.trim();
+        if (!trimmed) {
+          // Preserve intentional blank lines.
+          lines.push("");
+          return;
         }
-      }
 
-      if (currentLine) {
+        const words = trimmed.split(/\s+/);
+        let currentLine = words[0];
+
+        for (let i = 1; i < words.length; i++) {
+          const word = words[i];
+          const tentative = `${currentLine} ${word}`;
+          if (ctx.measureText(tentative).width > maxWidth) {
+            lines.push(currentLine);
+            currentLine = word;
+          } else {
+            currentLine = tentative;
+          }
+        }
+
         lines.push(currentLine);
-      }
+      });
 
       ctx.restore();
       return lines;
@@ -569,7 +600,7 @@
       const palette = palettes[paletteSelect.value];
       const fontFamily = fontSelect.value;
       const fontSize = parseInt(fontSizeRange.value, 10);
-      const lineHeight = fontSize * 1.25;
+      const lineHeight = fontSize * Number(lineSpacingRange.value);
 
       // Paper metrics scale with canvas size for proportional layout.
       const paperMargin = canvas.width * 0.075;
@@ -585,7 +616,8 @@
       };
 
       const maxTextWidth = paperMetrics.width - paperMetrics.padding * 2;
-      const quoteText = quoteInput.value.trim() || "Bạn thật dễ thương khi mỉm cười ✨";
+      const rawQuote = quoteInput.value;
+      const quoteText = rawQuote.trim().length ? rawQuote : "Bạn thật dễ thương khi mỉm cười ✨";
       const lines = wrapText(quoteText, maxTextWidth, fontSize, fontFamily);
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
