@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Replace "\n\n" → \n+</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; padding: 18px; max-width:900px; margin:auto; }
+    textarea { width:100%; height:160px; font-family: monospace; padding:8px; box-sizing:border-box; }
+    label{ display:inline-flex; gap:8px; align-items:center; margin-right:12px; }
+    .row{ display:flex; gap:12px; margin:8px 0; align-items:center; flex-wrap:wrap; }
+    button{ padding:8px 12px; border-radius:6px; cursor:pointer; }
+    pre.example{ background:#f6f6f6; padding:10px; border-radius:6px; overflow:auto; }
+  </style>
+</head>
+<body>
+  <h1>Thay thế <code>"\n\n"</code> → <code>\n+</code></h1>
+
+  <p>Dán văn bản vào ô đầu, chọn chế độ, bấm <strong>Convert</strong>.</p>
+
+  <textarea id="input" placeholder="Dán văn bản hoặc chuỗi ở đây..."></textarea>
+
+  <div class="row">
+    <label><input type="radio" name="mode" value="actual" checked> Thay newline thật (two newlines → newline + "+")</label>
+    <label style="display:none"><input type="radio" name="mode" value="literal"> Thay chuỗi literal <code>\n\n</code> → <code>\n+</code></label>
+    <button id="convert">Convert</button>
+    <button id="clear">Clear</button>
+    <button id="copy">Copy output</button>
+  </div>
+
+  <p>Kết quả:</p>
+  <textarea id="output" readonly placeholder="Kết quả sẽ hiện ở đây..."></textarea>
+
+  <h3>Ví dụ</h3>
+  <pre class="example" id="example">
+Input (actual mode):
+Dòng 1
+
+Dòng 2
+
+-> trở thành:
+Dòng 1
++Dòng 2
+  </pre>
+
+  <script>
+    const inputEl = document.getElementById('input');
+    const outputEl = document.getElementById('output');
+    const convertBtn = document.getElementById('convert');
+    const copyBtn = document.getElementById('copy');
+    const clearBtn = document.getElementById('clear');
+
+    function replaceActual(text){
+      // Thay \r\n\r\n hoặc \n\n thành '\n+' (1 newline + '+')
+      // Lưu ý: nếu muốn giữ 1 blank line rồi + trên dòng tiếp, sửa theo nhu cầu.
+      return text.replace(/\r?\n\r?\n/g, '\n+ ');
+    }
+
+    function replaceLiteral(text){
+      // Thay literal backslash-n backslash-n (\\n\\n) thành backslash-n plus (\\n+)
+      return text.replace(/\\n\\n/g, '\\n');
+    }
+
+    convertBtn.addEventListener('click', () => {
+      const mode = document.querySelector('input[name="mode"]:checked').value;
+      const src = inputEl.value;
+      let out = '';
+      if(mode === 'actual'){
+        out = replaceActual(src);
+      } else {
+        out = replaceLiteral(src);
+      }
+      outputEl.value = out;
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(outputEl.value);
+        copyBtn.textContent = 'Copied ✓';
+        setTimeout(() => copyBtn.textContent = 'Copy output', 1200);
+      } catch(e){
+        alert('Không thể copy — dùng Ctrl/Cmd+C');
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      inputEl.value = '';
+      outputEl.value = '';
+    });
+
+  </script>
+</body>
+</html>
